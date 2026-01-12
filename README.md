@@ -1,118 +1,118 @@
-# Claude Skill Authoring
+# Claude Skill 编写指南
 
-[English](README.md) | [中文](README_CN.md)
+[中文](README.md) | [English](README_EN.md)
 
-A Claude Code Skill for creating and validating Claude Code Skills. Meta, right?
+一个用于创建和验证 Claude Code Skills 的 Skill。是的，这是一个教 Claude 写 Skill 的 Skill。
 
-## What is this?
+## 这是什么？
 
-This is a skill that teaches Claude how to write effective Skills following [Anthropic's official best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices).
+这是一个教 Claude 如何按照 [Anthropic 官方最佳实践](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) 编写高效 Skill 的工具。
 
-## Installation
+## 安装
 
-### Claude Code (Recommended)
+### Claude Code（推荐）
 
 ```bash
-# Clone to your global skills directory
+# 克隆到全局 skills 目录
 git clone https://github.com/IndianOldTurtledove/claude-skill-authoring.git ~/.claude/skills/skill-authoring
 
-# Or clone to a specific project
+# 或克隆到特定项目
 git clone https://github.com/IndianOldTurtledove/claude-skill-authoring.git .claude/skills/skill-authoring
 ```
 
-### Manual
+### 手动安装
 
-Copy the contents to `.claude/skills/skill-authoring/` in your project or `~/.claude/skills/skill-authoring/` globally.
+将内容复制到项目的 `.claude/skills/skill-authoring/` 或全局的 `~/.claude/skills/skill-authoring/`。
 
-## Usage
+## 使用方法
 
-Once installed, Claude will automatically use this skill when you ask about creating or improving Skills.
+安装后，当你询问关于创建或改进 Skills 的问题时，Claude 会自动使用这个 skill。
 
-### Quick Commands
+### 快速命令
 
 ```bash
-# Initialize a new skill
+# 初始化新 skill
 python ~/.claude/skills/skill-authoring/scripts/init_skill.py my-skill-name
 
-# Validate a skill
+# 验证 skill
 python ~/.claude/skills/skill-authoring/scripts/quick_validate.py path/to/skill/
 
-# Package for distribution
+# 打包分发
 python ~/.claude/skills/skill-authoring/scripts/package_skill.py path/to/skill/
 ```
 
-### Example Conversation
+### 对话示例
 
 ```
-You: Help me create a skill for processing CSV files
+你: 帮我创建一个处理 CSV 文件的 skill
 
-Claude: I'll help you create a CSV processing skill. Let me initialize it first...
-[Uses init_skill.py to create the structure]
-[Writes SKILL.md with proper frontmatter]
-[Validates with quick_validate.py]
+Claude: 我来帮你创建一个 CSV 处理 skill。先初始化结构...
+[使用 init_skill.py 创建结构]
+[编写带有正确 frontmatter 的 SKILL.md]
+[使用 quick_validate.py 验证]
 ```
 
-## Skill Structure
+## 项目结构
 
 ```
 skill-authoring/
-├── SKILL.md                    # Main instructions (loaded when triggered)
+├── SKILL.md                    # 主指令文件（触发时加载）
 ├── scripts/
-│   ├── init_skill.py          # Initialize new skills from template
-│   ├── quick_validate.py      # Validate skill structure and frontmatter
-│   └── package_skill.py       # Package skill for distribution
+│   ├── init_skill.py          # 从模板初始化新 skill
+│   ├── quick_validate.py      # 验证 skill 结构和 frontmatter
+│   └── package_skill.py       # 打包 skill 用于分发
 └── references/
-    ├── output-patterns.md     # Template and examples patterns
-    └── workflows.md           # Sequential, conditional, feedback loop patterns
+    ├── output-patterns.md     # 模板和示例模式
+    └── workflows.md           # 顺序、条件、反馈循环模式
 ```
 
-## Key Concepts
+## 核心概念
 
-### Three-Level Loading
+### 三层加载架构
 
-| Level | When | Token Cost | Content |
-|-------|------|------------|---------|
-| L1: Metadata | Startup | ~100 tokens | name + description |
-| L2: Instructions | Triggered | <5k tokens | SKILL.md body |
-| L3: Resources | As needed | Unlimited | scripts/, references/ |
+| 层级 | 加载时机 | Token 成本 | 内容 |
+|------|----------|------------|------|
+| L1: 元数据 | 启动时 | ~100 tokens | name + description |
+| L2: 指令 | 触发时 | <5k tokens | SKILL.md 主体 |
+| L3: 资源 | 按需 | 无限制 | scripts/, references/ |
 
 ### YAML Frontmatter
 
 ```yaml
 ---
-name: my-skill-name      # lowercase, hyphens, max 64 chars
-description: Does X for Y. Use when working with Y or when user mentions X.
+name: my-skill-name      # 小写字母、连字符，最多 64 字符
+description: 为 Y 做 X。当处理 Y 或用户提到 X 时使用。
 ---
 ```
 
-### Core Principles
+### 核心原则
 
-1. **Be Concise** - Claude is smart, only add what it doesn't know
-2. **Match Freedom to Fragility** - High freedom for flexible tasks, low for critical operations
-3. **Progressive Disclosure** - Keep SKILL.md < 500 lines, split details to references/
-4. **One-Level Deep References** - Avoid nested file references
+1. **简洁** - Claude 很聪明，只添加它不知道的内容
+2. **自由度匹配脆弱性** - 灵活任务高自由度，关键操作低自由度
+3. **渐进式披露** - SKILL.md 保持 < 500 行，详细内容拆分到 references/
+4. **一层深度引用** - 避免嵌套文件引用
 
-## Validation Rules
+## 验证规则
 
-The `quick_validate.py` script checks:
+`quick_validate.py` 脚本检查：
 
-- SKILL.md exists with valid YAML frontmatter
-- `name`: lowercase, hyphens, max 64 chars, no "anthropic"/"claude"
-- `description`: max 1024 chars, no angle brackets
-- SKILL.md body < 500 lines
-- No Windows-style paths
+- SKILL.md 存在且有有效的 YAML frontmatter
+- `name`: 小写字母、连字符，最多 64 字符，不含 "anthropic"/"claude"
+- `description`: 最多 1024 字符，不含尖括号
+- SKILL.md 主体 < 500 行
+- 无 Windows 风格路径
 
-## Resources
+## 相关资源
 
-- [Anthropic Skills Repository](https://github.com/anthropics/skills) - Official skills from Anthropic
-- [Skills Best Practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) - Official documentation
-- [Skills Overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) - Architecture explanation
-- [awesome-claude-skills](https://github.com/travisvn/awesome-claude-skills) - Community skills collection
+- [Anthropic Skills 仓库](https://github.com/anthropics/skills) - Anthropic 官方 skills
+- [Skills 最佳实践](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) - 官方文档
+- [Skills 概述](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) - 架构说明
+- [awesome-claude-skills](https://github.com/travisvn/awesome-claude-skills) - 社区 skills 集合
 
-## License
+## 许可证
 
-MIT License - See [LICENSE](LICENSE) file for details.
+MIT 许可证 - 详见 [LICENSE](LICENSE) 文件。
 
-## Contributing
+## 贡献
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+欢迎贡献！请随时提交 Pull Request。

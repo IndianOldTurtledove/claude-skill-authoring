@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>揭秘</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #2d1b69 0%, #11052c 100%);
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            padding: 40px 24px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .question {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 30px;
+        }
+        .emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        h1 span {
+            background: linear-gradient(90deg, #feca57, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .reveal {
+            font-size: 1.8rem;
+            color: rgba(255,255,255,0.8);
+        }
+        .hint {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body onclick="location.href='04-chat1.html'">
+    <div class="container">
+        <p class="question">这个项目<br>我写了多少代码？</p>
+        <div class="emoji">🤯</div>
+        <h1><span>0</span> 行</h1>
+        <p class="reveal">我只说了三句话</p>
+    </div>
+    <div class="hint">点击看我说了什么 →</div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>结尾</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            user-select: none;
+            padding: 40px 24px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        h1 span {
+            background: linear-gradient(90deg, #e94560, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 36px;
+        }
+        .summary {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 36px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #44ff9a;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+        .cta {
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+        .tool-name {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+        }
+        .tool-link {
+            font-size: 0.9rem;
+            color: #a78bfa;
+            font-family: 'SF Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#e94560"/>
+                    <stop offset="100%" style="stop-color:#feca57"/>
+                </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="45" stroke="url(#grad)" stroke-width="3" fill="none"/>
+            <path d="M30 35 L25 50 L30 65" stroke="url(#grad)" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <path d="M70 35 L75 50 L70 65" stroke="url(#grad)" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <circle cx="42" cy="50" r="4" fill="url(#grad)"/>
+            <circle cx="58" cy="50" r="4" fill="url(#grad)"/>
+        </svg>
+
+        <h1>这就是 <span>Claude Code</span></h1>
+        <p class="subtitle">你的 AI 编程搭档</p>
+
+        <div class="summary">
+            <div class="stat">
+                <div class="stat-value">3</div>
+                <div class="stat-label">句话</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">0</div>
+                <div class="stat-label">行代码</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">1</div>
+                <div class="stat-label">开源项目</div>
+            </div>
+        </div>
+
+        <div class="cta">关注我 解锁更多玩法</div>
+
+        <div class="tool-name">使用工具</div>
+        <div class="tool-link">Claude Code</div>
+    </div>
+</body>
+</html>

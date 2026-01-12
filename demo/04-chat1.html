@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>第一句话</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif;
+            background: #0d1117;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            padding: 40px 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .chat-bubble {
+            background: #1c2128;
+            border-radius: 20px;
+            padding: 20px 24px;
+            border: 1px solid #30363d;
+            margin-bottom: 20px;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        .name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .message {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #e6edf3;
+        }
+        .result {
+            background: rgba(68, 255, 154, 0.1);
+            border-left: 4px solid #44ff9a;
+            padding: 18px 20px;
+            border-radius: 0 16px 16px 0;
+        }
+        .result-title {
+            color: #44ff9a;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+        .result-content {
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        .hint {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body onclick="location.href='05-chat2.html'">
+    <div class="container">
+        <div class="step-badge">第 1 句</div>
+
+        <div class="chat-bubble">
+            <div class="chat-header">
+                <div class="avatar">我</div>
+                <div class="name">我</div>
+            </div>
+            <div class="message">
+                帮我搜一下 Claude Skill 怎么写，有什么最佳实践
+            </div>
+        </div>
+
+        <div class="result">
+            <div class="result-title">Claude Code 自动完成 ↓</div>
+            <div class="result-content">
+                搜索官方文档 → 整理最佳实践 → 分析示例仓库 → 总结核心要点
+            </div>
+        </div>
+    </div>
+    <div class="hint">点击继续 →</div>
+</body>
+</html>
