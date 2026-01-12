@@ -1,5 +1,7 @@
 # Claude Skill Authoring
 
+[English](README.md) | [中文](README_CN.md)
+
 A Claude Code Skill for creating and validating Claude Code Skills. Meta, right?
 
 ## What is this?
