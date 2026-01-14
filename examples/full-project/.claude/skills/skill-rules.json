@@ -1,0 +1,164 @@
+{
+  "$schema": "./skill-rules.schema.json",
+  "version": "1.0.0",
+  "description": "Centralized skill trigger rules - customize for your project",
+  "_inspired_by": "https://github.com/diet103/claude-code-infrastructure-showcase",
+  "skills": {
+    "example-backend": {
+      "priority": "high",
+      "enforcement": "suggest",
+      "triggers": {
+        "promptTriggers": {
+          "keywords": [
+            "API", "backend", "database", "REST", "GraphQL",
+            "authentication", "authorization", "JWT", "OAuth"
+          ],
+          "intentPatterns": [
+            ".*design.*API.*",
+            ".*create.*endpoint.*",
+            ".*database.*query.*"
+          ]
+        },
+        "fileTriggers": {
+          "include": [
+            "src/api/**/*.py",
+            "src/routes/**/*.ts",
+            "server/**/*"
+          ],
+          "exclude": ["*_test.py", "*.spec.ts"]
+        }
+      }
+    },
+    "example-frontend": {
+      "priority": "high",
+      "enforcement": "suggest",
+      "triggers": {
+        "promptTriggers": {
+          "keywords": [
+            "UI", "UX", "component", "React", "Vue", "Angular",
+            "CSS", "styling", "responsive", "layout"
+          ],
+          "intentPatterns": [
+            ".*design.*page.*",
+            ".*create.*component.*",
+            ".*style.*"
+          ]
+        },
+        "fileTriggers": {
+          "include": [
+            "src/components/**/*",
+            "src/views/**/*",
+            "**/*.vue",
+            "**/*.tsx",
+            "**/*.css",
+            "**/*.scss"
+          ],
+          "exclude": ["**/node_modules/**"]
+        }
+      }
+    },
+    "example-testing": {
+      "priority": "medium",
+      "enforcement": "suggest",
+      "triggers": {
+        "promptTriggers": {
+          "keywords": [
+            "test", "testing", "unit test", "integration test",
+            "pytest", "jest", "coverage"
+          ],
+          "intentPatterns": [
+            ".*write.*test.*",
+            ".*add.*test.*"
+          ]
+        },
+        "fileTriggers": {
+          "include": [
+            "tests/**/*",
+            "**/*.test.ts",
+            "**/*.spec.ts",
+            "**/*_test.py"
+          ],
+          "exclude": []
+        }
+      }
+    },
+    "example-security": {
+      "priority": "critical",
+      "enforcement": "warn",
+      "triggers": {
+        "promptTriggers": {
+          "keywords": [
+            "security", "secret", "password", "API key",
+            "environment variable", ".env", "credentials"
+          ],
+          "intentPatterns": [
+            ".*secret.*",
+            ".*password.*",
+            ".*api.*key.*"
+          ]
+        },
+        "fileTriggers": {
+          "include": [
+            ".env*",
+            "**/credentials*",
+            "**/secrets*"
+          ],
+          "exclude": []
+        }
+      }
+    },
+    "example-deployment": {
+      "priority": "high",
+      "enforcement": "suggest",
+      "triggers": {
+        "promptTriggers": {
+          "keywords": [
+            "deploy", "deployment", "production", "staging",
+            "CI/CD", "Docker", "Kubernetes", "AWS", "GCP"
+          ],
+          "intentPatterns": [
+            ".*deploy.*",
+            ".*production.*",
+            ".*release.*"
+          ]
+        },
+        "fileTriggers": {
+          "include": [
+            "Dockerfile",
+            "docker-compose*.yml",
+            ".github/workflows/**/*",
+            "k8s/**/*"
+          ],
+          "exclude": []
+        }
+      }
+    }
+  },
+  "priorityLevels": {
+    "critical": {
+      "label": "Required",
+      "icon": "!!",
+      "description": "Must use - skipping may cause issues"
+    },
+    "high": {
+      "label": "Recommended",
+      "icon": "**",
+      "description": "Strongly recommended"
+    },
+    "medium": {
+      "label": "Suggested",
+      "icon": "*",
+      "description": "Consider using"
+    },
+    "low": {
+      "label": "Optional",
+      "icon": "-",
+      "description": "Available if needed"
+    }
+  },
+  "enforcementTypes": {
+    "suggest": "Recommend only, don't block",
+    "warn": "Show warning, allow to continue",
+    "block": "Require skill usage"
+  }
+}

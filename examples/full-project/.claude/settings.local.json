@@ -1,0 +1,32 @@
+{
+  "_comment": "Claude Code settings template - copy to .claude/settings.local.json",
+  "_inspired_by": "https://github.com/diet103/claude-code-infrastructure-showcase",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/skill-activation-prompt.sh",
+            "timeout": 5,
+            "statusMessage": "Analyzing prompt for skill recommendations..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-tool-use-tracker.sh",
+            "timeout": 3,
+            "statusMessage": "Tracking file changes..."
+          }
+        ]
+      }
+    ]
+  }
+}
