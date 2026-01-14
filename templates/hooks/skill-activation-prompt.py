@@ -13,6 +13,7 @@ Inspired by: https://github.com/diet103/claude-code-infrastructure-showcase
 
 import json
 import re
+import select
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -174,6 +175,19 @@ def generate_recommendation(matches: list[tuple[str, dict]], config: dict) -> st
     return "\n".join(lines)
 
 
+def stdin_has_data(timeout: float = 0.5) -> bool:
+    """Check if stdin has data available to read (non-blocking)"""
+    if sys.stdin.closed:
+        return False
+    try:
+        # Use select to check if stdin has data (Unix only, but works on macOS/Linux)
+        ready, _, _ = select.select([sys.stdin], [], [], timeout)
+        return bool(ready)
+    except (ValueError, OSError, TypeError):
+        # select doesn't work on this stdin (e.g., not a real file descriptor)
+        return False
+
+
 def main():
     """Main function"""
     log_debug("=== Hook started ===")
@@ -181,12 +195,17 @@ def main():
         # Read stdin with size limit to prevent memory issues
         MAX_INPUT_SIZE = 50000  # 50KB
 
-        # Check if stdin is available and readable
-        stdin_closed = sys.stdin.closed
-        stdin_readable = sys.stdin.readable() if hasattr(sys.stdin, 'readable') else True
-        log_debug(f"stdin.closed={stdin_closed}, stdin.readable()={stdin_readable}")
-        if stdin_closed or not stdin_readable:
-            log_debug("stdin not readable, exiting silently (possibly --resume)")
+        # Check if stdin is closed
+        if sys.stdin.closed:
+            log_debug("stdin closed, exiting silently")
+            sys.exit(0)
+
+        # Use select to check if stdin has data (prevents blocking on empty pipe)
+        # This is the key fix for the compact-after issue
+        has_data = stdin_has_data(timeout=0.5)
+        log_debug(f"stdin_has_data={has_data}")
+        if not has_data:
+            log_debug("no data on stdin within timeout, exiting silently (possibly compact)")
             sys.exit(0)  # Exit cleanly, no error
 
         input_str = sys.stdin.read(MAX_INPUT_SIZE)
