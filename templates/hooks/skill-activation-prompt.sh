@@ -1,19 +1,30 @@
 #!/bin/bash
 #
 # Skill Activation Prompt Hook
-# Automatically recommends relevant skills based on user input
+# 在用户提交提示词时自动推荐相关 Skills
 #
-# Event: UserPromptSubmit
-# Inspired by: https://github.com/diet103/claude-code-infrastructure-showcase
+# 触发事件: UserPromptSubmit
 #
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+if [ -z "$SCRIPT_DIR" ]; then
+    SCRIPT_DIR="$(dirname "$0")"
+fi
+
 PY_FILE="$SCRIPT_DIR/skill-activation-prompt.py"
 
+# Check if Python file exists
+if [ ! -f "$PY_FILE" ]; then
+    echo "[skill-activation] Error: $PY_FILE not found" >&2
+    exit 1
+fi
+
+# Run Python script
 if command -v python3 &> /dev/null; then
-    python3 "$PY_FILE"
+    exec python3 "$PY_FILE"
 elif command -v python &> /dev/null; then
-    python "$PY_FILE"
+    exec python "$PY_FILE"
 else
     echo "[skill-activation] Error: Python not found" >&2
     exit 1

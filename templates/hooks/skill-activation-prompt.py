@@ -14,8 +14,21 @@ Inspired by: https://github.com/diet103/claude-code-infrastructure-showcase
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+# Debug log file
+DEBUG_LOG = Path(__file__).parent / "hook-debug.log"
+
+
+def log_debug(msg: str):
+    """Write debug message to log file"""
+    try:
+        with open(DEBUG_LOG, "a", encoding="utf-8") as f:
+            f.write(f"[{datetime.now().isoformat()}] {msg}\n")
+    except Exception:
+        pass
 
 # Priority weights for sorting
 PRIORITY_WEIGHT = {
@@ -124,9 +137,9 @@ def generate_recommendation(matches: list[tuple[str, dict]], config: dict) -> st
         grouped[priority].append((skill_name, rule))
 
     priority_levels = config.get("priorityLevels", {
-        "critical": {"icon": "!!", "label": "Required"},
-        "high": {"icon": "**", "label": "Recommended"},
-        "medium": {"icon": "*", "label": "Suggested"},
+        "critical": {"icon": "!!", "label": "MUST USE"},
+        "high": {"icon": "**", "label": "SHOULD USE"},
+        "medium": {"icon": "*", "label": "Consider"},
         "low": {"icon": "-", "label": "Optional"},
     })
 
@@ -152,7 +165,9 @@ def generate_recommendation(matches: list[tuple[str, dict]], config: dict) -> st
         lines.append("")
 
     lines.append("=" * 60)
-    lines.append("  Use: Skill tool to invoke recommended skills")
+    lines.append("  ACTION REQUIRED: Use Skill tool to load these skills")
+    lines.append("  before proceeding. Skills contain project-specific")
+    lines.append("  configurations, APIs, and constraints you MUST follow.")
     lines.append("=" * 60)
     lines.append("")
 
@@ -161,17 +176,31 @@ def generate_recommendation(matches: list[tuple[str, dict]], config: dict) -> st
 
 def main():
     """Main function"""
+    log_debug("=== Hook started ===")
     try:
         # Read stdin with size limit to prevent memory issues
         MAX_INPUT_SIZE = 50000  # 50KB
+
+        # Check if stdin is available and readable
+        stdin_closed = sys.stdin.closed
+        stdin_readable = sys.stdin.readable() if hasattr(sys.stdin, 'readable') else True
+        log_debug(f"stdin.closed={stdin_closed}, stdin.readable()={stdin_readable}")
+        if stdin_closed or not stdin_readable:
+            log_debug("stdin not readable, exiting silently (possibly --resume)")
+            sys.exit(0)  # Exit cleanly, no error
+
         input_str = sys.stdin.read(MAX_INPUT_SIZE)
-        if not input_str.strip():
-            return
+        log_debug(f"Read {len(input_str)} bytes from stdin")
+        if not input_str or not input_str.strip():
+            log_debug("empty input, exiting silently")
+            sys.exit(0)  # Exit cleanly, no error
 
         try:
             hook_input = json.loads(input_str)
-        except json.JSONDecodeError:
-            # Input is not valid JSON, silently exit
+            log_debug("JSON parsed successfully")
+        except json.JSONDecodeError as e:
+            log_debug(f"ERROR: JSON parse error: {e}")
+            log_debug(f"Input preview: {input_str[:500]!r}")
             return
 
         prompt = hook_input.get("prompt", "")
@@ -195,9 +224,10 @@ def main():
         if recommendation:
             print(recommendation)
 
-    except Exception:
-        # Silently fail - hooks should not block user input
-        pass
+    except Exception as e:
+        log_debug(f"EXCEPTION: {type(e).__name__}: {e}")
+        import traceback
+        log_debug(traceback.format_exc())
 
 
 if __name__ == "__main__":
