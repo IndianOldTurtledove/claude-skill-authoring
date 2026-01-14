@@ -59,6 +59,11 @@ def load_skill_rules() -> dict[str, Any] | None:
 
 def matches_triggers(prompt: str, triggers: dict) -> bool:
     """Check if prompt matches skill trigger rules"""
+    # Limit prompt length for performance (avoid regex catastrophic backtracking)
+    MAX_PROMPT_LEN = 2000
+    if len(prompt) > MAX_PROMPT_LEN:
+        prompt = prompt[:MAX_PROMPT_LEN]
+
     prompt_lower = prompt.lower()
     prompt_triggers = triggers.get("promptTriggers", {})
 
@@ -67,12 +72,15 @@ def matches_triggers(prompt: str, triggers: dict) -> bool:
         if keyword.lower() in prompt_lower:
             return True
 
-    # Intent pattern matching (regex)
+    # Intent pattern matching (regex) - with timeout protection
     for pattern in prompt_triggers.get("intentPatterns", []):
         try:
+            # Use simple patterns only, skip complex ones on long input
+            if len(prompt) > 500 and (".*" in pattern or ".+" in pattern):
+                continue
             if re.search(pattern, prompt, re.IGNORECASE):
                 return True
-        except re.error:
+        except (re.error, RecursionError):
             pass
 
     return False
@@ -154,18 +162,25 @@ def generate_recommendation(matches: list[tuple[str, dict]], config: dict) -> st
 def main():
     """Main function"""
     try:
-        # Read stdin
-        input_str = sys.stdin.read()
+        # Read stdin with size limit to prevent memory issues
+        MAX_INPUT_SIZE = 50000  # 50KB
+        input_str = sys.stdin.read(MAX_INPUT_SIZE)
         if not input_str.strip():
             return
 
         try:
             hook_input = json.loads(input_str)
         except json.JSONDecodeError:
+            # Input is not valid JSON, silently exit
             return
 
         prompt = hook_input.get("prompt", "")
-        if not prompt:
+        if not prompt or not isinstance(prompt, str):
+            return
+
+        # Skip if prompt looks like raw logs/dumps (contains too many special chars)
+        special_char_ratio = sum(1 for c in prompt[:1000] if c in '{}[]<>\\|') / min(len(prompt), 1000)
+        if special_char_ratio > 0.1:  # More than 10% special characters
             return
 
         # Load rules
@@ -180,8 +195,9 @@ def main():
         if recommendation:
             print(recommendation)
 
-    except Exception as e:
-        print(f"[skill-activation] Error: {e}", file=sys.stderr)
+    except Exception:
+        # Silently fail - hooks should not block user input
+        pass
 
 
 if __name__ == "__main__":
