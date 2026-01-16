@@ -11,6 +11,25 @@
             "command": ".claude/hooks/skill-activation-prompt.sh",
             "timeout": 5,
             "statusMessage": "Analyzing prompt for skill recommendations..."
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/debug-mode-detector.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking for debug scenario..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/investigation-guard.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking investigation status..."
           }
         ]
       }
@@ -24,6 +43,18 @@
             "command": ".claude/hooks/post-tool-use-tracker.sh",
             "timeout": 3,
             "statusMessage": "Tracking file changes..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/verification-guard.sh\"",
+            "timeout": 15,
+            "statusMessage": "Verifying code changes..."
           }
         ]
       }
