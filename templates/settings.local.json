@@ -8,9 +8,28 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/skill-activation-prompt.sh",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.py\" 2>/dev/null || python3 \"$HOME/.claude/hooks/skill-activation-prompt.py\"",
             "timeout": 5,
-            "statusMessage": "Analyzing prompt for skill recommendations..."
+            "statusMessage": "Analyzing prompt..."
+          },
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/debug-mode-detector.py\" 2>/dev/null || python3 \"$HOME/.claude/hooks/debug-mode-detector.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking for debug scenario..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/investigation-guard.py\" 2>/dev/null || python3 \"$HOME/.claude/hooks/investigation-guard.py\"",
+            "timeout": 3,
+            "statusMessage": "Checking investigation status..."
           }
         ]
       }
@@ -21,9 +40,21 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/post-tool-use-tracker.sh",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-tracker.py\" 2>/dev/null || python3 \"$HOME/.claude/hooks/post-tool-use-tracker.py\"",
             "timeout": 3,
-            "statusMessage": "Tracking file changes..."
+            "statusMessage": "Tracking changes..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/verification-guard.sh\" 2>/dev/null || bash \"$HOME/.claude/hooks/verification-guard.sh\"",
+            "timeout": 15,
+            "statusMessage": "Verifying code changes..."
           }
         ]
       }

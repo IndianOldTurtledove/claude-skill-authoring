@@ -15,16 +15,25 @@
 
 ## 快速开始
 
-### 一键安装（推荐）
+### 全局安装（推荐，所有项目生效）
 
 ```bash
-# 克隆仓库
-git clone https://github.com/IndianOldTurtledove/claude-skill-authoring.git
-cd claude-skill-authoring
+# 一行命令安装到 ~/.claude/
+curl -fsSL https://raw.githubusercontent.com/IndianOldTurtledove/claude-skill-authoring/main/install.sh | bash -s -- --global
+```
 
-# 安装到你的项目
+这会把 hooks 安装到 `~/.claude/hooks/`，对所有项目生效。
+
+### 项目级安装
+
+```bash
+# 只对当前项目生效
+curl -fsSL https://raw.githubusercontent.com/IndianOldTurtledove/claude-skill-authoring/main/install.sh | bash
+
+# 或克隆后安装
+git clone https://github.com/IndianOldTurtledove/claude-skill-authoring.git
 cd /path/to/your/project
-/path/to/claude-skill-authoring/install.sh
+/path/to/claude-skill-authoring/install.sh --project
 ```
 
 ### 只安装 Skill 编写指南

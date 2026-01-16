@@ -15,16 +15,25 @@ The infrastructure part is inspired by [claude-code-infrastructure-showcase](htt
 
 ## Quick Start
 
-### One-Click Install (Recommended)
+### Global Install (Recommended, affects all projects)
 
 ```bash
-# Clone the repo
-git clone https://github.com/IndianOldTurtledove/claude-skill-authoring.git
-cd claude-skill-authoring
+# One-liner to install to ~/.claude/
+curl -fsSL https://raw.githubusercontent.com/IndianOldTurtledove/claude-skill-authoring/main/install.sh | bash -s -- --global
+```
 
-# Install to your project
+This installs hooks to `~/.claude/hooks/`, affecting all projects.
+
+### Project-Level Install
+
+```bash
+# Affects only current project
+curl -fsSL https://raw.githubusercontent.com/IndianOldTurtledove/claude-skill-authoring/main/install.sh | bash
+
+# Or clone and install
+git clone https://github.com/IndianOldTurtledove/claude-skill-authoring.git
 cd /path/to/your/project
-/path/to/claude-skill-authoring/install.sh
+/path/to/claude-skill-authoring/install.sh --project
 ```
 
 ### Install Only the Skill Guide
