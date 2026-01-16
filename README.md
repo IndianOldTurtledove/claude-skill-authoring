@@ -56,27 +56,56 @@ python scripts/package_skill.py path/to/skill/
 
 ### 2. Hooks 系统
 
-事件驱动的自动化钩子：
+事件驱动的自动化钩子，覆盖完整开发生命周期：
 
 | Hook | 事件 | 功能 |
 |------|------|------|
 | skill-activation-prompt | UserPromptSubmit | 自动分析用户输入，推荐相关 Skills |
+| debug-mode-detector | UserPromptSubmit | 智能检测 debug 场景，激活系统化调试流程 |
+| investigation-guard | PreToolUse | 强制 "先读后改"，防止盲目修改代码 |
 | post-tool-use-tracker | PostToolUse | 追踪文件修改，建议 lint/type 检查命令 |
+| verification-guard | Stop | 任务结束前验证代码完整性 |
 
-**工作原理**：
+**工作流程**：
 
 ```
-用户输入 "帮我设计一个 API"
+用户输入 "又报错了，TypeError on line 42"
     |
     v
-[skill-activation-prompt hook]
+[UserPromptSubmit Hooks]
+    +---> skill-activation-prompt: 推荐相关 skill
+    +---> debug-mode-detector: 检测到 debug 场景 (评分机制)
+              |
+              v
+          输出系统化调试提示:
+          "Phase 1: 先调查根因..."
     |
     v
-输出推荐: "建议使用 backend-dev skill"
+Claude 尝试修改文件
     |
     v
-（推荐信息注入给 Claude，Claude 据此决策）
+[PreToolUse Hook]
+    +---> investigation-guard: 检查是否先 Read 过该文件
+              |
+              +---> 未调查? 警告/阻止，要求先阅读理解
+    |
+    v
+[PostToolUse Hook]
+    +---> post-tool-use-tracker: 记录修改，建议检查命令
+    |
+    v
+任务结束
+    |
+    v
+[Stop Hook]
+    +---> verification-guard: 验证 Python 语法，确保代码完整
 ```
+
+**debug-mode-detector 评分机制**：
+- 技术信号：`TypeError`、`line 42`、stack trace → 高分
+- 问题词：`报错`、`崩溃`、`bug` → 中分
+- 挫败感信号：重复尝试、脏话、`???` → 触发更严格模式
+- 累积效应：同一会话多次触发，阈值逐渐降低
 
 ### 3. skill-rules.json
 
@@ -138,7 +167,10 @@ claude-skill-authoring/
 ├── templates/                  # 基础设施模板
 │   ├── hooks/                  # Hook 模板
 │   │   ├── skill-activation-prompt.py
+│   │   ├── debug-mode-detector.py
+│   │   ├── investigation-guard.py
 │   │   ├── post-tool-use-tracker.py
+│   │   ├── verification-guard.sh
 │   │   └── README.md
 │   ├── skill-rules.json        # 触发规则模板
 │   ├── settings.local.json     # 配置模板

@@ -56,27 +56,56 @@ python scripts/package_skill.py path/to/skill/
 
 ### 2. Hooks System
 
-Event-driven automation hooks:
+Event-driven automation hooks covering the complete development lifecycle:
 
 | Hook | Event | Function |
 |------|-------|----------|
 | skill-activation-prompt | UserPromptSubmit | Analyze user input, recommend relevant Skills |
+| debug-mode-detector | UserPromptSubmit | Smart debug scenario detection, activate systematic debugging |
+| investigation-guard | PreToolUse | Enforce "read before edit" policy, prevent blind modifications |
 | post-tool-use-tracker | PostToolUse | Track file changes, suggest lint/type checks |
+| verification-guard | Stop | Verify code integrity before task completion |
 
-**How It Works**:
+**Workflow**:
 
 ```
-User input: "Help me design an API"
+User input: "Error again, TypeError on line 42"
     |
     v
-[skill-activation-prompt hook]
+[UserPromptSubmit Hooks]
+    +---> skill-activation-prompt: Recommend relevant skill
+    +---> debug-mode-detector: Detect debug scenario (scoring mechanism)
+              |
+              v
+          Output systematic debugging prompt:
+          "Phase 1: Investigate root cause first..."
     |
     v
-Output: "Recommend using backend-dev skill"
+Claude attempts to modify file
     |
     v
-(Recommendation injected to Claude for decision making)
+[PreToolUse Hook]
+    +---> investigation-guard: Check if file was Read first
+              |
+              +---> Not investigated? Warn/block, require reading first
+    |
+    v
+[PostToolUse Hook]
+    +---> post-tool-use-tracker: Track changes, suggest check commands
+    |
+    v
+Task completion
+    |
+    v
+[Stop Hook]
+    +---> verification-guard: Verify Python syntax, ensure code integrity
 ```
+
+**debug-mode-detector scoring mechanism**:
+- Technical signals: `TypeError`, `line 42`, stack trace → High score
+- Problem words: `error`, `crash`, `bug` → Medium score
+- Frustration signals: Repeated attempts, profanity, `???` → Triggers stricter mode
+- Cumulative effect: Multiple triggers in same session lower the threshold
 
 ### 3. skill-rules.json
 
@@ -138,7 +167,10 @@ claude-skill-authoring/
 ├── templates/                  # Infrastructure templates
 │   ├── hooks/                  # Hook templates
 │   │   ├── skill-activation-prompt.py
+│   │   ├── debug-mode-detector.py
+│   │   ├── investigation-guard.py
 │   │   ├── post-tool-use-tracker.py
+│   │   ├── verification-guard.sh
 │   │   └── README.md
 │   ├── skill-rules.json        # Trigger rules template
 │   ├── settings.local.json     # Config template
