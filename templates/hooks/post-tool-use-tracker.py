@@ -6,7 +6,10 @@ Tracks file modifications and suggests appropriate check commands.
 Event: PostToolUse (Edit, Write, MultiEdit, NotebookEdit)
 
 Input: JSON HookInput (stdin)
-Output: File tracking info and suggested commands (stdout)
+Output: JSON format (stdout) - injected to Claude context via additionalContext
+
+IMPORTANT: PostToolUse plain text stdout will NOT be injected to Claude context!
+Must use JSON format (hookSpecificOutput.additionalContext) for Claude to see.
 
 Inspired by: https://github.com/diet103/claude-code-infrastructure-showcase
 """
@@ -14,6 +17,9 @@ Inspired by: https://github.com/diet103/claude-code-infrastructure-showcase
 import json
 import sys
 from pathlib import Path
+
+# Project root directory (customize for your project)
+PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # File type to check commands mapping
 # Customize this for your project's toolchain
@@ -126,6 +132,7 @@ def main():
         try:
             hook_input = json.loads(input_str)
         except json.JSONDecodeError:
+            # Silent fail, don't affect user experience
             return
 
         tool_name = hook_input.get("tool_name", "")
@@ -143,7 +150,7 @@ def main():
             if file_path:
                 # Try to make relative path
                 try:
-                    rel_path = str(Path(file_path).relative_to(Path.cwd()))
+                    rel_path = str(Path(file_path).relative_to(PROJECT_ROOT))
                 except ValueError:
                     rel_path = file_path
                 modified_files.append(rel_path)
@@ -154,7 +161,7 @@ def main():
                 file_path = edit.get("file_path", "")
                 if file_path:
                     try:
-                        rel_path = str(Path(file_path).relative_to(Path.cwd()))
+                        rel_path = str(Path(file_path).relative_to(PROJECT_ROOT))
                     except ValueError:
                         rel_path = file_path
                     if rel_path not in modified_files:
@@ -170,13 +177,20 @@ def main():
             if cmds:
                 check_commands[file_path] = cmds
 
-        # Output
-        output = format_output(modified_files, check_commands)
-        if output:
-            print(output)
+        # Output using JSON format to inject into Claude context
+        output_text = format_output(modified_files, check_commands)
+        if output_text:
+            json_output = {
+                "hookSpecificOutput": {
+                    "hookEventName": "PostToolUse",
+                    "additionalContext": output_text
+                }
+            }
+            print(json.dumps(json_output))
 
-    except Exception as e:
-        print(f"[file-tracker] Error: {e}", file=sys.stderr)
+    except Exception:
+        # Silent fail, don't affect normal workflow
+        pass
 
 
 if __name__ == "__main__":
